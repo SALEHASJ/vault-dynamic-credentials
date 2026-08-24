@@ -20,9 +20,9 @@ Four identities, four different levels of access, all enforced by policy rather 
 
 | Identity | Type | Can do |
 |---|---|---|
-| `salih` | Human — operator | Configure the database engine, read credentials |
-| `eyad` | Human — developer | Read credentials from one role only |
-| `brad` | Human — auditor | List what exists; cannot pull a working credential |
+| `salih` | Human  operator | Configure the database engine, read credentials |
+| `eyad` | Human  developer | Read credentials from one role only |
+| `brad` | Human  auditor | List what exists; cannot pull a working credential |
 | `ci-pipeline` | Machine — AppRole | Read one credential path, nothing else |
 
 ## Running it
