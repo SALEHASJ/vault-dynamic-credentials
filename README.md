@@ -6,6 +6,8 @@ This lab replaces that model. No human or service holds a database password. Ins
 
 ## What's running
 
+![Vault sign-in](docs/images/vault-ui-login.png) 
+
 | Component | Role |
 |---|---|
 | Vault (Docker) | Issues credentials, enforces policy |
@@ -76,6 +78,9 @@ docker exec -it postgres-vault psql -U postgres -d demodb -c "\du"
 
 Postgres itself enforces the expiry. Nothing needs to remember to clean these up.
 
+![Terraform applying the full configuration](docs/images/terraform-apply.png)
+*Thirteen resources — auth methods, policies, users, AppRole, and the database engine — created in a single apply.*
+
 **Machines authenticate without human credentials.** The pipeline logs in with a role_id and secret_id — no password, no root token:
 
 ```bash
@@ -91,6 +96,9 @@ vault list auth/userpass/users
 
 Least privilege isn't a claim here; it's demonstrable.
 
+![AppRole authentication and a denied request](docs/images/approle-auth-and-denial.png)
+*The pipeline authenticates with role_id and secret_id, reads a database credential, and is refused when it tries to list users.*
+
 **Credential origin is traceable.** Generated usernames carry the auth method that requested them — `v-token-app-role-...` for a token login, `v-approle-app-role-...` for the pipeline. The audit trail is visible in the credential itself.
 
 **Drift is detected, not discovered later.** Delete a policy by hand:
@@ -101,6 +109,9 @@ terraform plan
 ```
 
 Terraform reports the difference and restores it on the next apply. The security posture is enforced by code rather than by whoever remembers what it's supposed to look like.
+
+![Terraform detecting a manually deleted policy](docs/images/drift-detection.png)
+*A policy was deleted directly in Vault. Terraform reports the difference on the next plan.*
 
 ## How this plugs into CI
 
