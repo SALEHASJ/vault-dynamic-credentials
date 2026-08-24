@@ -6,7 +6,7 @@ This lab replaces that model. No human or service holds a database password. Ins
 
 ## What's running
 
-![Vault sign-in](docs/images/vault-ui-login.png) 
+
 
 | Component | Role |
 |---|---|
