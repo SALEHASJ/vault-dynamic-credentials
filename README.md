@@ -1,6 +1,6 @@
 # Dynamic Database Credentials with Vault and Terraform
 
-Static database passwords are one of the most common security problems in production, and one of the least discussed. They live in config files, CI variables, and Slack messages. They're shared between an application, three developers, and a pipeline. Nobody rotates them, because rotation means coordinating a change across four systems and probably breaking something at 2am. And when a credential leaks, the audit trail is one shared identity — you can't tell whose it was or what used it.
+Static database passwords are one of the most common security problems in production, and one of the least discussed. They live in config files, CI variables, and Slack messages. They're shared between an application, three developers, and a pipeline. Nobody rotates them, because rotation means coordinating a change across four systems and probably breaking something at 2am. And when a credential leaks, the audit trail is one shared identity, you can't tell whose it was or what used it.
 
 This lab replaces that model. No human or service holds a database password. Instead, each identity authenticates as itself, Vault checks what that identity is allowed to do, and issues a credential that exists only for that request, expires on its own, and is traceable back to who asked for it.
 
@@ -81,13 +81,13 @@ Postgres itself enforces the expiry. Nothing needs to remember to clean these up
 ![Terraform applying the full configuration](docs/images/terraform-apply.png)
 *Thirteen resources — auth methods, policies, users, AppRole, and the database engine — created in a single apply.*
 
-**Machines authenticate without human credentials.** The pipeline logs in with a role_id and secret_id — no password, no root token:
+**Machines authenticate without human credentials.** The pipeline logs in with a role_id and secret_id  no password, no root token:
 
 ```bash
 vault write auth/approle/login role_id=<role_id> secret_id=<secret_id>
 ```
 
-It receives a 20-minute token carrying only `pipeline-policy`. Using that token, it can read a database credential — and nothing else:
+It receives a 20-minute token carrying only 'pipeline-policy'. Using that token, it can read a database credential, and nothing else:
 
 ```bash
 vault list auth/userpass/users
@@ -99,7 +99,7 @@ Least privilege isn't a claim here; it's demonstrable.
 ![AppRole authentication and a denied request](docs/images/approle-auth-and-denial.png)
 *The pipeline authenticates with role_id and secret_id, reads a database credential, and is refused when it tries to list users.*
 
-**Credential origin is traceable.** Generated usernames carry the auth method that requested them — `v-token-app-role-...` for a token login, `v-approle-app-role-...` for the pipeline. The audit trail is visible in the credential itself.
+**Credential origin is traceable.** Generated usernames carry the auth method that requested them  `v-token-app-role-...` for a token login, `v-approle-app-role-...` for the pipeline. The audit trail is visible in the credential itself.
 
 **Drift is detected, not discovered later.** Delete a policy by hand:
 
@@ -140,12 +140,12 @@ This is a lab, and dev-mode Vault is deliberately not production. A real deploym
 - Remote Terraform state with locking and encryption
 - Audit devices enabled and shipped to a SIEM
 - Vault reachable only over TLS, on a private network
-- Machine identity via a platform-native method — Kubernetes service accounts, cloud IAM, or OIDC — rather than a long-lived secret_id
+- Machine identity via a platform-native method  Kubernetes service accounts, cloud IAM, or OIDC rather than a long-lived secret_id
 - Shorter TTLs tuned to actual job duration
 
 ## When not to use Vault
 
-If you're single-cloud and entirely on managed services, native tooling is simpler and cheaper — Azure Key Vault with managed identity, or IAM database authentication on AWS, removes the credential entirely with less to operate.
+If you're single-cloud and entirely on managed services, native tooling is simpler and cheaper  Azure Key Vault with managed identity, or IAM database authentication on AWS, removes the credential entirely with less to operate.
 
 Vault earns its place when the estate is mixed: multiple clouds, on-prem systems, databases and APIs that have no native identity story, and a need for one policy model and one audit log across all of them.
 
