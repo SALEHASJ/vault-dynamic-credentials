@@ -1,0 +1,28 @@
+# Terraform state — contains secrets in plaintext, never commit
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+.terraform/
+crash.log
+
+# Vault data directory
+vault-data/
+01-docker/vault-data/
+
+# Vault binaries and archives
+vault
+*.zip
+
+# Local policy scratch files
+*.hcl
+!*/main.tf
+
+# Environment files
+.env
+*.env
+
+# Editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
